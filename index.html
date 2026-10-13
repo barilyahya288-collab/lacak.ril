@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080910">
+<title>Lacak.AI Pro — AI Investigation Assistant</title>
+<style>
+:root{--bg:#080910;--panel:#0b0c14;--line:#252633;--text:#f5f6fb;--muted:#9297aa;--gold:#ffb51b;--gold2:#ff9800;--blue:#8ba9ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% 45%,#111321 0%,var(--bg) 58%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;min-height:100vh}
+header{height:74px;border-bottom:1px solid #282936;background:#090a11dd;display:flex;align-items:center;justify-content:space-between;padding:0 5.5%;gap:16px;position:sticky;top:0;z-index:5;backdrop-filter:blur(16px)}
+.left,.right,.brand,.switches{display:flex;align-items:center;gap:15px}.iconbtn{border:0;background:transparent;color:#9ba0b4;font-size:22px;cursor:pointer;padding:7px}.brand{font-size:22px;font-weight:750;white-space:nowrap;letter-spacing:-.7px}.brand em,.hero h1 em{font-style:normal;color:var(--gold)}.protag{font-size:12px;color:var(--gold);border:1px solid #805713;background:#35270d;padding:4px 10px;border-radius:9px;letter-spacing:.5px}
+.switches{border:1px solid #282936;border-radius:25px;padding:4px;gap:3px}.switches button{background:transparent;border:0;color:#8b8d9d;padding:9px 20px;border-radius:18px;font-size:14px;cursor:pointer}.switches button.active{background:#3a2a0d;color:var(--gold);box-shadow:inset 0 0 0 1px #9a6a12}
+.round{width:39px;height:39px;border-radius:50%;background:#202331;display:grid;place-items:center;color:#c8ccdc;border:1px solid #303343}
+main{max-width:900px;margin:0 auto;padding:0 24px}.hero{min-height:calc(100vh - 74px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:65px 0 110px}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:19px}.hero h1{font-size:clamp(38px,6vw,60px);line-height:1.08;letter-spacing:-2.4px;margin:0 0 24px}.sub{color:#aeb5cb;font-size:17px;line-height:1.65;max-width:560px;margin:0 0 48px}.composer{width:min(100%,680px);border:1px solid #393b4b;background:#0a0b13dd;border-radius:24px;padding:24px 25px 18px;text-align:left;box-shadow:0 20px 65px #0003;transition:border-color .2s}.composer:focus-within{border-color:#70602f}.composer textarea{width:100%;resize:vertical;min-height:75px;max-height:220px;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:18px}.composer textarea::placeholder{color:#5d6172}.composer-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px}.tools{display:flex;gap:15px;color:#9da4bb;font-size:14px}.send{width:53px;height:53px;border:0;border-radius:18px;background:#252735;color:#f2f4ff;font-size:26px;cursor:pointer;transition:.2s}.send:hover{background:#3a2e15;color:var(--gold);transform:translateY(-2px)}.chips{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:620px;margin:27px auto 0}.chip{border:1px solid #393b4b;background:#0d0e17;color:#c1c6d8;border-radius:30px;padding:11px 17px;font-size:14px;cursor:pointer;transition:.2s}.chip:hover,.chip:focus{border-color:#8d6822;color:var(--gold)}.chip span{margin-right:8px}.hint{color:#656a7e;font-size:13px;letter-spacing:.3px;margin-top:26px}.features{padding:0 0 70px}.section-label{display:flex;align-items:center;gap:18px;color:#777d94;font-size:12px;letter-spacing:4px;justify-content:center}.section-label:before,.section-label:after{content:"";height:1px;background:#292b3b;flex:1;max-width:210px}.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px}.feature{border:1px solid #252735;background:#0d0e17b8;border-radius:17px;padding:21px;text-align:left}.feature .symbol{font-size:22px;color:var(--gold)}.feature h3{font-size:15px;margin:14px 0 8px}.feature p{font-size:13px;line-height:1.6;color:#858ba0;margin:0}.notice{display:none;width:min(100%,680px);margin-top:18px;text-align:left;padding:16px 18px;border:1px solid #393b4b;border-radius:14px;color:#bfc5d7;background:#0d0f18;font-size:14px;line-height:1.55}.notice.show{display:block}.notice strong{color:var(--gold)}footer{text-align:center;padding:28px 20px 35px;color:#5f6477;font-size:12px;border-top:1px solid #20212d}
+@media(max-width:600px){header{height:65px;padding:0 13px;gap:8px}.left,.right{gap:7px}.brand{font-size:17px}.switches button{padding:8px 12px;font-size:12px}.protag{font-size:10px;padding:4px 7px}.hide-mobile{display:none}.hero{min-height:calc(100svh - 65px);padding:50px 0 80px}.sub{font-size:15px;margin-bottom:35px}.composer{padding:19px 17px 14px;border-radius:20px}.composer textarea{font-size:16px;min-height:75px}.chip{font-size:13px;padding:10px 13px}.feature-grid{grid-template-columns:1fr}.features{padding-bottom:42px}.hero h1{letter-spacing:-1.7px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="left">
+    <button class="iconbtn" id="menuBtn" aria-label="Buka menu">☰</button>
+    <div class="brand">Lacak<em>.AI</em> Pro</div>
+    <span class="protag">PRO</span>
+  </div>
+  <div class="right">
+    <div class="switches" aria-label="Pilih mode">
+      <button id="freeBtn">Free</button><button id="proBtn" class="active">Pro</button>
+    </div>
+    <button class="iconbtn hide-mobile" id="themeBtn" aria-label="Ganti tema">☼</button>
+    <div class="round" aria-label="Profil">♙</div>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <div class="eyebrow">AI investigation assistant</div>
+  <h1>Lacak<em>.AI</em> Pro</h1>
+  <p class="sub">Asisten AI cerdas untuk mencari, menganalisis,<br class="hide-mobile"> dan menemukan informasi dengan cepat.</p>
+  <form class="composer" id="searchForm">
+    <textarea id="query" placeholder="Masukkan data investigasi..." aria-label="Masukkan data investigasi"></textarea>
+    <div class="composer-bottom">
+      <div class="tools"><span title="Lampiran">♧</span><span title="Format kode">‹›</span><span>/</span></div>
+      <button class="send" type="submit" aria-label="Kirim pencarian">➤</button>
+    </div>
+  </form>
+  <div class="chips">
+    <button class="chip" data-prompt="Bantu saya memahami cara memverifikasi nomor HP secara legal"><span>▯</span> Lacak nomor HP</button>
+    <button class="chip" data-prompt="Bagaimana cara memeriksa apakah email saya pernah muncul dalam kebocoran data?"><span>✉</span> Cek email bocor</button>
+    <button class="chip" data-prompt="Bantu susun langkah pencarian informasi publik berdasarkan nama"><span>♙</span> Cari nama</button>
+    <button class="chip" data-prompt="Jelaskan cara memeriksa informasi kendaraan melalui sumber resmi"><span>▤</span> Cek nopol</button>
+  </div>
+  <div class="hint">Enter kirim · Shift+Enter baris baru</div>
+  <div class="notice" id="notice" role="status"></div>
+</section>
+<section class="features">
+  <div class="section-label">FITUR UTAMA</div>
+  <div class="feature-grid">
+    <article class="feature"><div class="symbol">⌕</div><h3>Pencarian terarah</h3><p>Susun pertanyaan dan langkah pencarian informasi publik secara lebih terstruktur.</p></article>
+    <article class="feature"><div class="symbol">◇</div><h3>Analisis AI</h3><p>Bantu merangkum informasi yang kamu masukkan dan menemukan hal yang perlu diverifikasi.</p></article>
+    <article class="feature"><div class="symbol">⌑</div><h3>Privasi lebih sadar</h3><p>Gunakan sumber resmi dan hindari membagikan data pribadi sensitif tanpa izin.</p></article>
+  </div>
+</section>
+</main>
+<footer>© 2026 Lacak.AI Pro · Demo antarmuka · Belum terhubung ke layanan pencarian atau database.</footer>
+<script>
+const query=document.getElementById('query'), notice=document.getElementById('notice');
+document.querySelectorAll('.chip').forEach(btn=>btn.addEventListener('click',()=>{query.value=btn.dataset.prompt;query.focus()}));
+document.getElementById('searchForm').addEventListener('submit',e=>{
+ e.preventDefault();const q=query.value.trim();
+ if(!q){query.focus();return}
+ notice.innerHTML='<strong>Demo antarmuka:</strong> Pertanyaan kamu sudah disiapkan. Halaman ini belum terhubung ke API atau database, jadi belum menjalankan pencarian nyata.';
+ notice.classList.add('show');
+});
+query.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('searchForm').requestSubmit()}});
+const free=document.getElementById('freeBtn'),pro=document.getElementById('proBtn');
+function setMode(mode){free.classList.toggle('active',mode==='free');pro.classList.toggle('active',mode==='pro');document.querySelector('.eyebrow').textContent=mode==='pro'?'AI investigation assistant':'AI assistant · Free';document.querySelector('.hero h1').innerHTML=mode==='pro'?'Lacak<em>.AI</em> Pro':'Lacak<em>.AI</em> Free'}
+free.addEventListener('click',()=>setMode('free'));pro.addEventListener('click',()=>setMode('pro'));
+document.getElementById('menuBtn').addEventListener('click',()=>{notice.textContent='Menu demo: Pencarian · Riwayat · Pengaturan';notice.classList.add('show')});
+document.getElementById('themeBtn').addEventListener('click',()=>{document.body.classList.toggle('light');const light=document.body.classList.contains('light');document.body.style.background=light?'#f2f3f8':'radial-gradient(ellipse at 50% 45%,#111321 0%,#080910 58%)';document.body.style.color=light?'#171925':'#f5f6fb';document.querySelectorAll('.composer,.feature,.chip').forEach(el=>{el.style.background=light?'#fff':'';el.style.color=light?'#171925':''})});
+</script>
+</body>
+</html>
