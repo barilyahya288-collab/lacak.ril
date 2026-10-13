@@ -63,20 +63,135 @@ main{max-width:900px;margin:0 auto;padding:0 24px}.hero{min-height:calc(100vh - 
 </main>
 <footer>© 2026 Lacak.AI Pro · Demo antarmuka · Belum terhubung ke layanan pencarian atau database.</footer>
 <script>
-const query=document.getElementById('query'), notice=document.getElementById('notice');
-document.querySelectorAll('.chip').forEach(btn=>btn.addEventListener('click',()=>{query.value=btn.dataset.prompt;query.focus()}));
-document.getElementById('searchForm').addEventListener('submit',e=>{
- e.preventDefault();const q=query.value.trim();
- if(!q){query.focus();return}
- notice.innerHTML='<strong>Demo antarmuka:</strong> Pertanyaan kamu sudah disiapkan. Halaman ini belum terhubung ke API atau database, jadi belum menjalankan pencarian nyata.';
- notice.classList.add('show');
+
+const query = document.getElementById('query');
+const notice = document.getElementById('notice');
+const form = document.getElementById('searchForm');
+
+document.querySelectorAll('.chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    query.value = btn.dataset.prompt;
+    query.focus();
+  });
 });
-query.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('searchForm').requestSubmit()}});
-const free=document.getElementById('freeBtn'),pro=document.getElementById('proBtn');
-function setMode(mode){free.classList.toggle('active',mode==='free');pro.classList.toggle('active',mode==='pro');document.querySelector('.eyebrow').textContent=mode==='pro'?'AI investigation assistant':'AI assistant · Free';document.querySelector('.hero h1').innerHTML=mode==='pro'?'Lacak<em>.AI</em> Pro':'Lacak<em>.AI</em> Free'}
-free.addEventListener('click',()=>setMode('free'));pro.addEventListener('click',()=>setMode('pro'));
-document.getElementById('menuBtn').addEventListener('click',()=>{notice.textContent='Menu demo: Pencarian · Riwayat · Pengaturan';notice.classList.add('show')});
-document.getElementById('themeBtn').addEventListener('click',()=>{document.body.classList.toggle('light');const light=document.body.classList.contains('light');document.body.style.background=light?'#f2f3f8':'radial-gradient(ellipse at 50% 45%,#111321 0%,#080910 58%)';document.body.style.color=light?'#171925':'#f5f6fb';document.querySelectorAll('.composer,.feature,.chip').forEach(el=>{el.style.background=light?'#fff':'';el.style.color=light?'#171925':''})});
+
+function showMessage(message) {
+  notice.replaceChildren();
+  notice.textContent = message;
+  notice.classList.add('show');
+}
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const q = query.value.trim();
+
+  if (!q) {
+    query.focus();
+    return;
+  }
+
+  showMessage('Sedang mencari informasi...');
+
+  try {
+    const response = await fetch(
+      `/api/search?q=${encodeURIComponent(q)}`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Pencarian gagal.');
+    }
+
+    notice.replaceChildren();
+
+    const heading = document.createElement('h3');
+    heading.textContent = `Hasil pencarian: ${data.query}`;
+    notice.appendChild(heading);
+
+    if (!data.results || data.results.length === 0) {
+      const empty = document.createElement('p');
+      empty.textContent = 'Belum ada hasil. Coba kata kunci lain.';
+      notice.appendChild(empty);
+    }
+
+    (data.results || []).forEach(item => {
+      const card = document.createElement('article');
+      card.style.cssText =
+        'padding:12px 0;border-top:1px solid #393b4b';
+
+      const title = document.createElement('a');
+      title.textContent = item.title;
+      title.href = item.url;
+      title.target = '_blank';
+      title.rel = 'noopener noreferrer';
+      title.style.cssText =
+        'color:#ffb51b;font-weight:700;font-size:16px';
+
+      const description = document.createElement('p');
+      description.textContent =
+        item.description || 'Tidak ada deskripsi.';
+      description.style.cssText =
+        'color:#bfc5d7;line-height:1.5;margin:8px 0';
+
+      card.append(title, description);
+      notice.appendChild(card);
+    });
+
+    notice.classList.add('show');
+  } catch (error) {
+    showMessage(
+      `Pencarian gagal: ${error.message}. Coba lagi nanti.`
+    );
+  }
+});
+
+query.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    form.requestSubmit();
+  }
+});
+
+const free = document.getElementById('freeBtn');
+const pro = document.getElementById('proBtn');
+
+function setMode(mode) {
+  free.classList.toggle('active', mode === 'free');
+  pro.classList.toggle('active', mode === 'pro');
+
+  document.querySelector('.eyebrow').textContent =
+    mode === 'pro'
+      ? 'AI investigation assistant'
+      : 'AI assistant · Free';
+
+  document.querySelector('.hero h1').innerHTML =
+    mode === 'pro' ? 'Lacak<em>.AI</em> Pro' : 'Lacak<em>.AI</em> Free';
+}
+
+free.addEventListener('click', () => setMode('free'));
+pro.addEventListener('click', () => setMode('pro'));
+
+document.getElementById('menuBtn').addEventListener('click', () => {
+  showMessage('Menu demo: Pencarian · Riwayat · Pengaturan');
+});
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  const light = document.body.classList.contains('light');
+
+  document.body.style.background = light
+    ? '#f2f3f8'
+    : 'radial-gradient(ellipse at 50% 45%,#111321 0%,#080910 58%)';
+
+  document.body.style.color = light ? '#171925' : '#f5f6fb';
+
+  document.querySelectorAll('.composer,.feature,.chip').forEach(el => {
+    el.style.background = light ? '#fff' : '';
+    el.style.color = light ? '#171925' : '';
+  });
+});
+  
 </script>
 </body>
 </html>
