@@ -1,8 +1,0 @@
-{
-  "appId": "com.lacakai.pro",
-  "appName": "Lacak.AI Pro",
-  "webDir": "www",
-  "server": {
-    "androidScheme": "https"
-  }
-}

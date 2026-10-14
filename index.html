@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080910">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <title>Lacak.AI Pro — AI Investigation Assistant</title>
 <style>
 :root{--bg:#080910;--panel:#0b0c14;--line:#252633;--text:#f5f6fb;--muted:#9297aa;--gold:#ffb51b;--gold2:#ff9800;--blue:#8ba9ff}
@@ -83,40 +81,6 @@ function showMessage(message) {
   notice.classList.add('show');
 }
 
-async function performSearch(q) {
-  if (typeof window.Capacitor !== 'undefined') {
-    var sources = [
-      { name: "Wikipedia Indonesia", endpoint: "https://id.wikipedia.org/w/rest.php/v1/search/page", limit: 8, prefix: "id" },
-      { name: "Wikipedia Inggris", endpoint: "https://en.wikipedia.org/w/rest.php/v1/search/page", limit: 5, prefix: "en" }
-    ];
-    var resultsBySource = await Promise.all(sources.map(async function(s) {
-      try {
-        var url = new URL(s.endpoint);
-        url.searchParams.set("q", q);
-        url.searchParams.set("limit", s.limit);
-        var res = await fetch(url, { signal: AbortSignal.timeout(7000) });
-        if (!res.ok) return [];
-        var data = await res.json();
-        return (data.pages || []).map(function(p) {
-          return {
-            title: p.title,
-            description: p.description || p.excerpt || "",
-            url: "https://" + s.prefix + ".wikipedia.org/wiki/" + encodeURIComponent(p.title.replace(/ /g, "_")),
-            source: s.name
-          };
-        });
-      } catch (e) { return []; }
-    }));
-    var results = resultsBySource.flat().filter(function(i) { return i.title && i.url; })
-      .filter(function(i, idx, arr) { return arr.findIndex(function(o) { return o.url === i.url; }) === idx; }).slice(0, 13);
-    return { query: q, results: results, sources: [...new Set(results.map(function(i) { return i.source; }))], note: "Hasil berasal dari artikel Wikipedia publik." };
-  }
-  var response = await fetch("/api/search?q=" + encodeURIComponent(q));
-  var data = await response.json();
-  if (!response.ok) throw new Error(data.error || "Pencarian gagal.");
-  return data;
-}
-
 form.addEventListener('submit', async e => {
   e.preventDefault();
   const q = query.value.trim();
@@ -129,7 +93,15 @@ form.addEventListener('submit', async e => {
   showMessage('Sedang mencari informasi...');
 
   try {
-    const data = await performSearch(q);
+    const response = await fetch(
+      `/api/search?q=${encodeURIComponent(q)}`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Pencarian gagal.');
+    }
 
     notice.replaceChildren();
 
@@ -219,10 +191,7 @@ document.getElementById('themeBtn').addEventListener('click', () => {
     el.style.color = light ? '#171925' : '';
   });
 });
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
-}
+  
 </script>
 </body>
 </html>
