@@ -16,6 +16,11 @@ app.get("/manifest.json", (req, res) => res.sendFile(join(__dirname, "manifest.j
 app.get("/sw.js", (req, res) => res.sendFile(join(__dirname, "sw.js")));
 app.use("/icons", express.static(join(__dirname, "icons")));
 
+// APK download
+app.get("/download/apk", (req, res) => {
+  res.download(join(__dirname, "lacak-ai-pro-debug.apk"), "LacakAI-Pro-debug.apk");
+});
+
 // API route — the handler already uses Express-compatible req/res
 app.get("/api/search", (req, res) => {
   searchHandler(req, res);
