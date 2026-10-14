@@ -11,6 +11,11 @@ app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "index.html"));
 });
 
+// Serve PWA assets
+app.get("/manifest.json", (req, res) => res.sendFile(join(__dirname, "manifest.json")));
+app.get("/sw.js", (req, res) => res.sendFile(join(__dirname, "sw.js")));
+app.use("/icons", express.static(join(__dirname, "icons")));
+
 // API route — the handler already uses Express-compatible req/res
 app.get("/api/search", (req, res) => {
   searchHandler(req, res);
